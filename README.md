@@ -16,6 +16,7 @@ Then install whl file in bdist folder with pip as
 ### Find mail
 ```python
 # Get Dict of folderName: List[ReceivedMail, ReceivedMail, ...]
+hndlr = OutlookHandler('NameOfOutlookRootFolder') # Sometimes is own mail like x@x.com
 received_mails_dict = hndlr.get_emails_by_subject(subject, exact_date=date.today(), search_in_inbox=True)
 
 #Iter
