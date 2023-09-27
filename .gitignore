@@ -62,6 +62,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 local_tests/
+testing_routine.py
 
 # Translations
 *.mo

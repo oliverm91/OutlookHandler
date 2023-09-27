@@ -4,13 +4,24 @@ from datetime import datetime, date
 import os
 
 class NewMail:
-    def __init__(self, recipient: Union[str, Iterable], copy_recipient: Union[str, Iterable]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, Iterable]=None) -> None:
-        self._recipient = recipient
-        self._copy_recipient = copy_recipient
+    def __init__(self, recipient: Union[str, Iterable], copy_recipient: Union[str, Iterable]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, Iterable]=None):
+        if isinstance(recipient, str):
+            self._recipient = [recipient]            
+        else:
+            self._recipient = [v for v in recipient]
+        if isinstance(copy_recipient, str):
+            self._copy_recipient = [copy_recipient]            
+        else:
+            if copy_recipient is None:
+                copy_recipient = []
+            self._copy_recipient = [v for v in copy_recipient]
         self._subject = subject
         self._body=body
         self._html_body=html_body
-        self._attachment_path=attachment_path
+        if isinstance(attachment_path, str):
+            self._attachment_path = [attachment_path]            
+        else:
+            self._attachment_path = [v for v in attachment_path]
         self._mail=None
         self.set_mail_obj()
 
@@ -20,14 +31,16 @@ class NewMail:
 
     @recipient.setter
     def recipient(self, value):
-        if isinstance(value, Iterable):
-            self._recipient = list(value)
+        if isinstance(value, str):
+            self._recipient = [value]            
         else:
-            self._recipient = [value]
+            self._recipient = [v for v in value]
         self.set_mail_obj()
 
     def add_recipient(self, new_recipient: str) -> None:
-        self.recipient.append(new_recipient)
+        r = self.recipient.copy()
+        r.append(new_recipient)
+        self.recipient = r
 
     @property
     def copy_recipient(self) -> List[str]:
@@ -35,14 +48,16 @@ class NewMail:
 
     @copy_recipient.setter
     def copy_recipient(self, value):
-        if isinstance(value, Iterable):
-            self._copy_recipient = list(value)
+        if isinstance(value, str):
+            self._copy_recipient = [value]            
         else:
-            self._copy_recipient = [value]
+            self._copy_recipient = [v for v in value]
         self.set_mail_obj()
 
     def add_copy_recipient(self, new_copy_recipient: str) -> None:
-        self.copy_recipient.append(new_copy_recipient)
+        cr = self.copy_recipient.copy()
+        cr.append(new_copy_recipient)
+        self.copy_recipient = cr
 
     @property
     def subject(self):
@@ -77,25 +92,43 @@ class NewMail:
 
     @attachment_path.setter
     def attachment_path(self, value):
-        if isinstance(value, Iterable):
-            self._attachment_path = list(value)
+        if isinstance(value, str):
+            self._attachment_path = [value]            
         else:
-            self._attachment_path = [value]
+            self._attachment_path = [v for v in value]
         self.set_mail_obj()
 
     def add_attachment_path(self, attachment_path: str):
-        self.attachment_path.append(attachment_path)
+        ap = self.attachment_path.copy()
+        ap.append(attachment_path)
+        self.attachment_path = ap
+
+    def remove_duplicate_recipients(self) -> None:
+        recipients = [r for r in self._mail.Recipients if r.Type==1]
+        cc_recipients = [r for r in self._mail.Recipients if r.Type==2]
+        recipient_addresses = []
+        cc_recipient_addresses = []
+        for r in recipients:
+            address = str(r.AddressEntry)
+            if address in recipient_addresses:
+                self._mail.Recipients.Remove(r.Index)
+            recipient_addresses.append(address)
+        for cc_r in cc_recipients:
+            address = str(cc_r.AddressEntry)
+            if address in cc_recipient_addresses:
+                self._mail.Recipients.Remove(cc_r.Index)
+            cc_recipient_addresses.append(address)
 
     def set_mail_obj(self) -> None:
         outlook = win32com.client.Dispatch('Outlook.Application')
         mail = outlook.CreateItem(0)
-        to_recipients = [self.recipient] if not isinstance(self.recipient, Iterable) else self.recipient
+        to_recipients = [self.recipient] if isinstance(self.recipient, str) else self.recipient
 
         for rec in to_recipients:
             r = mail.Recipients.Add(rec)
             r.Type = 1 # Declare recipient in To
         if self.copy_recipient is not None:
-            cc_recipients = [self.copy_recipient] if not isinstance(self.copy_recipient, Iterable) else self.copy_recipient
+            cc_recipients = [self.copy_recipient] if isinstance(self.copy_recipient, str) else self.copy_recipient
             for rec in cc_recipients:
                 r = mail.Recipients.Add(rec)
                 r.Type = 2 # Declare recipient in CC
@@ -107,11 +140,12 @@ class NewMail:
             mail.Body = self.body
         
         if self.attachment_path is not None:
-            attachment_paths = [self.attachment_path] if not isinstance(self.attachment_path, Iterable) else self.attachment_path
+            attachment_paths = [self.attachment_path] if isinstance(self.attachment_path, str) else self.attachment_path
             for ap in attachment_paths:
                 mail.Attachments.Add(ap)
         
         self._mail=mail
+        self.remove_duplicate_recipients()
     
     def send(self) -> None:
         self._mail.Send()
@@ -128,7 +162,7 @@ class ReceivedMailAttachment:
 
 
 class ReceivedMail:
-    def __init__(self, pyWin32MailObj) -> None:
+    def __init__(self, pyWin32MailObj):
         self.pywin32mail = pyWin32MailObj
         self.datetime = datetime(self.pywin32mail.ReceivedTime.year, self.pywin32mail.ReceivedTime.month, self.pywin32mail.ReceivedTime.day,
                                  self.pywin32mail.ReceivedTime.hour, self.pywin32mail.ReceivedTime.minute, self.pywin32mail.ReceivedTime.second)
@@ -153,23 +187,26 @@ class ReceivedMail:
             reply.HTMLBody = html_body + reply.HTMLBody
         elif body != "":
             reply.Body = body + reply.Body
-        for er in extra_recipients:
-            r=reply.Recipients.Add(er)
-            r.Type=1
-        for ecr in extra_copy_recipients:
-            r=reply.Recipients.Add(ecr)
-            r.Type=2
-        for ap in attachment_paths:
-            reply.Attachments.Add(ap)
-        reply.send()
+        if extra_recipients is not None:
+            for er in extra_recipients:
+                r=reply.Recipients.Add(er)
+                r.Type=1
+        if extra_copy_recipients is not None:
+            for ecr in extra_copy_recipients:
+                r=reply.Recipients.Add(ecr)
+                r.Type=2
+        if attachment_paths is not None:
+            for ap in attachment_paths:
+                reply.Attachments.Add(ap)
+        reply.send
 
 
 class OutlookHandler:
     def __init__(self, root_folder_name_contain: str, inbox_name: str='Bandeja de entrada') -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-        self.root_folder = self.get_root_folder()
-        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]
         self.root_folder_name_contain = root_folder_name_contain
+        self.root_folder = self.get_root_folder()
+        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]        
 
     def get_root_folder(self):
         counter = 1
