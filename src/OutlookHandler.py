@@ -115,6 +115,7 @@ class NewMail:
     
     def send(self) -> None:
         self._mail.Send()
+
         
 class ReceivedMailAttachment:
     def __init__(self, pyWin32AttachmentObj) -> None:
@@ -124,6 +125,7 @@ class ReceivedMailAttachment:
     
     def save(self, save_dir: str, save_filename: str) -> None:
         self.pywin32attachment.SaveAsFile(os.path.join(save_dir, save_filename))
+
 
 class ReceivedMail:
     def __init__(self, pyWin32MailObj) -> None:
@@ -160,7 +162,6 @@ class ReceivedMail:
         for ap in attachment_paths:
             reply.Attachments.Add(ap)
         reply.send()
-        
 
 
 class OutlookHandler:
