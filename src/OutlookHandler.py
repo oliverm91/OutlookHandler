@@ -32,7 +32,7 @@ class Mail:
     def __repr__(self) -> str:
         return self.__str__()
 
-class MailReader:
+class OutlookHandler:
     def __init__(self, root_folder_name_contain: str) -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.root_folder = self.get_root_folder()
@@ -92,5 +92,3 @@ class MailReader:
                 folders = None
         self._search_emails_by_subject_recursive(self.root_folder, subject_contains, folder_mails_dict, min_date=min_date, max_date=max_date, exact_date=exact_date, folders=folders, search_in_inbox=search_in_inbox)
         return folder_mails_dict
-    
-mr = MailReader()
