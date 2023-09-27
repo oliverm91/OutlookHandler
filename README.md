@@ -1,4 +1,4 @@
-### Totally untested
+### Only tested in few artificial cases. Never in real processes
 
 # OutlookHandler
 
