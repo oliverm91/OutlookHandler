@@ -33,18 +33,19 @@ class Mail:
         return self.__str__()
 
 class MailReader:
-    def __init__(self) -> None:
+    def __init__(self, root_folder_name_contain: str) -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.root_folder = self.get_root_folder()
         inbox_name = 'Bandeja de entrada'
         self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]
+        self.root_folder_name_contain = root_folder_name_contain
 
     def get_root_folder(self):
         counter = 1
-        while counter < 10:
+        while counter < 30:
             folder = self.outlook_app.Folders.Item(counter)
-            if '@larrainvial' in folder.name:
-                return folder
+            if f'{self.root_folder_name_contain}' in folder.name:
+                    return folder
             counter += 1
             
         raise Exception('Root folder not found')
