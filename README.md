@@ -13,7 +13,7 @@ Then install whl file in bdist folder with pip as
 
 ## Examples
 
-# Find mail
+### Find mail
 ```python
 # Get Dict of folderName: List[ReceivedMail, ReceivedMail, ...]
 received_mails_dict = hndlr.get_emails_by_subject(subject, exact_date=date.today(), search_in_inbox=True)
@@ -24,7 +24,7 @@ for received_mails in received_mails_dict.values():
         print(f'Replying to {received_mail.sender}')
         received_mail.reply_all('This is the reply', extra_copy_recipients=['x@x.com'], attachment_paths=[os.path.join(path, 'test.txt')])
 ```
-# Send mail
+### Send mail
 ```python
 nm = NewMail(['x@x.com', 'y@x.com'], subject=subject, body='ABC', attachment_path=os.path.join(path, 'test1.txt'))
 nm.add_recipient('z@x.com')
