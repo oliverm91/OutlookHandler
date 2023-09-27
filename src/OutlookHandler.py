@@ -165,10 +165,9 @@ class ReceivedMail:
 
 
 class OutlookHandler:
-    def __init__(self, root_folder_name_contain: str) -> None:
+    def __init__(self, root_folder_name_contain: str, inbox_name: str='Bandeja de entrada') -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.root_folder = self.get_root_folder()
-        inbox_name = 'Bandeja de entrada'
         self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]
         self.root_folder_name_contain = root_folder_name_contain
 

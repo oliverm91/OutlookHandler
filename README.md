@@ -1,3 +1,5 @@
+### Totally untested
+
 # OutlookHandler
 
 Wrapper of win32com library for easier use.
@@ -8,3 +10,4 @@ Wrapper of win32com library for easier use.
 Then install whl file in bdist folder with pip as
 
 `pip install bdist/whlfilename.whl`
+
