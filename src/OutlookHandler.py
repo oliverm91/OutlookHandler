@@ -116,7 +116,7 @@ class NewMail:
     def send(self) -> None:
         self._mail.Send()
 
-        
+
 class ReceivedMailAttachment:
     def __init__(self, pyWin32AttachmentObj) -> None:
         self.pywin32attachment = pyWin32AttachmentObj
@@ -176,8 +176,8 @@ class OutlookHandler:
         counter = 1
         while counter < 30:
             folder = self.outlook_app.Folders.Item(counter)
-            if f'{self.root_folder_name_contain}' in folder.name:
-                    return folder
+            if self.root_folder_name_contain in folder.name:
+                return folder
             counter += 1
             
         raise Exception('Root folder not found')
