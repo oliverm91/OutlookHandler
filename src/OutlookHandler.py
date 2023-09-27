@@ -181,7 +181,6 @@ class OutlookHandler:
             
         raise Exception('Root folder not found')
 
-
     def _search_emails_by_subject_recursive(self, folder, subject_contains, folder_mails_dict, min_date: date=None, max_date: date=None, exact_date: date=None, folders: List[str]=None, search_in_inbox: bool=False):
         search_filter = f"@SQL=urn:schemas:httpmail:subject LIKE '%{subject_contains}%'"
         if exact_date is not None:
