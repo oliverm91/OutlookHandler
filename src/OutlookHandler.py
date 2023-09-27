@@ -5,17 +5,92 @@ import os
 
 class NewMail:
     def __init__(self, recipient: Union[str, Iterable], copy_recipient: Union[str, Iterable]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, Iterable]=None) -> None:
-        self.recipient = recipient
-        self.copy_recipient = copy_recipient
-        self.subject = subject
-        self.body=body
-        self.html_body=html_body
-        self.attachment_path=attachment_path
+        self._recipient = recipient
+        self._copy_recipient = copy_recipient
+        self._subject = subject
+        self._body=body
+        self._html_body=html_body
+        self._attachment_path=attachment_path
+        self._mail=None
+        self.set_mail_obj()
+
+    @property
+    def recipient(self) -> List[str]:
+        return self._recipient
+
+    @recipient.setter
+    def recipient(self, value):
+        if isinstance(value, Iterable):
+            self._recipient = list(value)
+        else:
+            self._recipient = [value]
+        self.set_mail_obj()
+
+    def add_recipient(self, new_recipient: str) -> None:
+        self.recipient.append(new_recipient)
+
+    @property
+    def copy_recipient(self) -> List[str]:
+        return self._copy_recipient
+
+    @copy_recipient.setter
+    def copy_recipient(self, value):
+        if isinstance(value, Iterable):
+            self._copy_recipient = list(value)
+        else:
+            self._copy_recipient = [value]
+        self.set_mail_obj()
+
+    def add_copy_recipient(self, new_copy_recipient: str) -> None:
+        self.copy_recipient.append(new_copy_recipient)
+
+    @property
+    def subject(self):
+        return self._subject
+
+    @subject.setter
+    def subject(self, value):
+        self._subject = value
+        self.set_mail_obj()
+
+    @property
+    def body(self):
+        return self._body
+
+    @body.setter
+    def body(self, value):
+        self._body = value
+        self.set_mail_obj()
+
+    @property
+    def html_body(self):
+        return self._html_body
+
+    @html_body.setter
+    def html_body(self, value):
+        self._html_body = value
+        self.set_mail_obj()
+
+    @property
+    def attachment_path(self) -> List[str]:
+        return self._attachment_path
+
+    @attachment_path.setter
+    def attachment_path(self, value):
+        if isinstance(value, Iterable):
+            self._attachment_path = list(value)
+        else:
+            self._attachment_path = [value]
+        self.set_mail_obj()
+
+    def add_attachment_path(self, attachment_path: str):
+        self.attachment_path.append(attachment_path)
 
     def set_mail_obj(self) -> None:
         outlook = win32com.client.Dispatch('Outlook.Application')
         mail = outlook.CreateItem(0)
         to_recipients = [self.recipient] if not isinstance(self.recipient, Iterable) else self.recipient
+
         for rec in to_recipients:
             r = mail.Recipients.Add(rec)
             r.Type = 1 # Declare recipient in To
@@ -34,9 +109,13 @@ class NewMail:
         if self.attachment_path is not None:
             attachment_paths = [self.attachment_path] if not isinstance(self.attachment_path, Iterable) else self.attachment_path
             for ap in attachment_paths:
-                mail.Attachments.Add(ap)        
+                mail.Attachments.Add(ap)
         
-
+        self._mail=mail
+    
+    def send(self) -> None:
+        self._mail.Send()
+        
 class ReceivedMailAttachment:
     def __init__(self, pyWin32AttachmentObj) -> None:
         self.pywin32attachment = pyWin32AttachmentObj
@@ -65,6 +144,24 @@ class ReceivedMail:
     
     def __repr__(self) -> str:
         return self.__str__()
+    
+    def reply_all(self, body: str="", html_body: str="", extra_recipients: List[str]=None, extra_copy_recipients: List[str]=None, attachment_paths: List[str]=None) -> None:
+        reply = self.pywin32mail.ReplyAll()
+        if html_body != "":
+            reply.HTMLBody = html_body + reply.HTMLBody
+        elif body != "":
+            reply.Body = body + reply.Body
+        for er in extra_recipients:
+            r=reply.Recipients.Add(er)
+            r.Type=1
+        for ecr in extra_copy_recipients:
+            r=reply.Recipients.Add(ecr)
+            r.Type=2
+        for ap in attachment_paths:
+            reply.Attachments.Add(ap)
+        reply.send()
+        
+
 
 class OutlookHandler:
     def __init__(self, root_folder_name_contain: str) -> None:
