@@ -164,16 +164,16 @@ class ReceivedMailAttachment:
 class ReceivedMail:
     def __init__(self, pyWin32MailObj):
         self.pywin32mail = pyWin32MailObj
-        self.datetime = datetime(self.pywin32mail.ReceivedTime.year, self.pywin32mail.ReceivedTime.month, self.pywin32mail.ReceivedTime.day,
+        self.datetime: datetime = datetime(self.pywin32mail.ReceivedTime.year, self.pywin32mail.ReceivedTime.month, self.pywin32mail.ReceivedTime.day,
                                  self.pywin32mail.ReceivedTime.hour, self.pywin32mail.ReceivedTime.minute, self.pywin32mail.ReceivedTime.second)
-        self.date = self.datetime.date()
+        self.date: date = self.datetime.date()
         self.subject: str = self.pywin32mail.subject
         self.sender = str(self.pywin32mail.Sender)
         self.body: str = self.pywin32mail.body
         self.html_body: str = self.pywin32mail.htmlbody
         pywin32_attachments_lst = list(self.pywin32mail.attachments)
         self.attachments: List[ReceivedMailAttachment] = [ReceivedMailAttachment(pywin32_att) for pywin32_att in pywin32_attachments_lst if pywin32_att.type == 1]
-        self.has_attachments = len(self.attachments) > 0
+        self.has_attachments: bool = len(self.attachments) > 0
     
     def __str__(self) -> str:
         return f'<ReceivedMail obj: {self.subject[:10]}..., from: {self.sender}, sent on: {self.date.strftime("%Y-%m-%d")}'
