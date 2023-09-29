@@ -202,21 +202,22 @@ class ReceivedMail:
 
 
 class OutlookHandler:
-    def __init__(self, root_folder_name_contain: str, inbox_name: str='Bandeja de entrada') -> None:
+    def __init__(self, root_folder_name_contain: str, inbox_name: str='Bandeja de entrada', max_tries_found_root_folder: int=30) -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.root_folder_name_contain = root_folder_name_contain
         self.root_folder = self.get_root_folder()
-        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]        
+        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]
+        self._mtfrf = max_tries_found_root_folder
 
     def get_root_folder(self) -> str:
-        counter = 1
-        while counter < 30:
+        counter = 0
+        while counter < self._mtfrf:
             folder = self.outlook_app.Folders.Item(counter)
             if self.root_folder_name_contain in folder.name:
                 return folder
             counter += 1
             
-        raise Exception('Root folder not found')
+        raise LookupError('Root folder not found')
 
     def _search_emails_by_subject_recursive(self, folder, subject_contains, folder_mails_dict, min_date: date=None, max_date: date=None, exact_date: date=None, folders: List[str]=None, search_in_inbox: bool=False):
         search_filter = f"@SQL=urn:schemas:httpmail:subject LIKE '%{subject_contains}%'"
