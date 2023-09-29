@@ -1,10 +1,10 @@
-from typing import Dict, List, Union, Iterable
+from typing import Dict, List, Union
 import win32com.client
 from datetime import datetime, date
 import os
 
 class NewMail:
-    def __init__(self, recipient: Union[str, Iterable], copy_recipient: Union[str, Iterable]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, Iterable]=None):
+    def __init__(self, recipient: Union[str, List[str]], copy_recipient: Union[str, List[str]]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, List[str]]=None):
         if isinstance(recipient, str):
             self._recipient = [recipient]            
         else:
@@ -30,7 +30,7 @@ class NewMail:
         return self._recipient
 
     @recipient.setter
-    def recipient(self, value):
+    def recipient(self, value: Union[str, List[str]]):
         if isinstance(value, str):
             self._recipient = [value]            
         else:
@@ -47,7 +47,7 @@ class NewMail:
         return self._copy_recipient
 
     @copy_recipient.setter
-    def copy_recipient(self, value):
+    def copy_recipient(self, value: Union[str, List[str]]):
         if isinstance(value, str):
             self._copy_recipient = [value]            
         else:
@@ -60,29 +60,29 @@ class NewMail:
         self.copy_recipient = cr
 
     @property
-    def subject(self):
+    def subject(self) -> str:
         return self._subject
 
     @subject.setter
-    def subject(self, value):
+    def subject(self, value: str):
         self._subject = value
         self.set_mail_obj()
 
     @property
-    def body(self):
+    def body(self) -> str:
         return self._body
 
     @body.setter
-    def body(self, value):
+    def body(self, value: str):
         self._body = value
         self.set_mail_obj()
 
     @property
-    def html_body(self):
+    def html_body(self) -> str:
         return self._html_body
 
     @html_body.setter
-    def html_body(self, value):
+    def html_body(self, value: str):
         self._html_body = value
         self.set_mail_obj()
 
@@ -91,14 +91,14 @@ class NewMail:
         return self._attachment_path
 
     @attachment_path.setter
-    def attachment_path(self, value):
+    def attachment_path(self, value: Union[str, List[str]]):
         if isinstance(value, str):
             self._attachment_path = [value]            
         else:
             self._attachment_path = [v for v in value]
         self.set_mail_obj()
 
-    def add_attachment_path(self, attachment_path: str):
+    def add_attachment_path(self, attachment_path: str) -> None:
         ap = self.attachment_path.copy()
         ap.append(attachment_path)
         self.attachment_path = ap
@@ -176,7 +176,7 @@ class ReceivedMail:
         self.has_attachments = len(self.attachments) > 0
     
     def __str__(self) -> str:
-        return f'<Mail obj: {self.subject[:10]}..., from: {self.sender}, sent on: {self.date.strftime("%Y-%m-%d")}'
+        return f'<ReceivedMail obj: {self.subject[:10]}..., from: {self.sender}, sent on: {self.date.strftime("%Y-%m-%d")}'
     
     def __repr__(self) -> str:
         return self.__str__()
@@ -208,7 +208,7 @@ class OutlookHandler:
         self.root_folder = self.get_root_folder()
         self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]        
 
-    def get_root_folder(self):
+    def get_root_folder(self) -> str:
         counter = 1
         while counter < 30:
             folder = self.outlook_app.Folders.Item(counter)
