@@ -217,7 +217,7 @@ class OutlookHandler:
                 return folder
             counter += 1
             
-        raise LookupError('Root folder not found')
+        raise LookupError(f'Root folder not found. No folder name containing {self.root_folder_name_contain} was found.')
 
     def _search_emails_by_subject_recursive(self, folder, subject_contains, folder_mails_dict, min_date: date=None, max_date: date=None, exact_date: date=None, folders: List[str]=None, search_in_inbox: bool=False):
         search_filter = f"@SQL=urn:schemas:httpmail:subject LIKE '%{subject_contains}%'"
