@@ -1,10 +1,9 @@
-from typing import Dict, List, Union
 import win32com.client
 from datetime import datetime, date
 import os
 
 class NewMail:
-    def __init__(self, recipient: Union[str, List[str]], copy_recipient: Union[str, List[str]]=None, subject: str="", body: str="", html_body: str="", attachment_path: Union[str, List[str]]=None):
+    def __init__(self, recipient: str | list[str], copy_recipient: str | list[str]=None, subject: str="", body: str="", html_body: str="", attachment_path: str | list[str]=None):
         if isinstance(recipient, str):
             self._recipient = [recipient]            
         else:
@@ -26,11 +25,11 @@ class NewMail:
         self.set_mail_obj()
 
     @property
-    def recipient(self) -> List[str]:
+    def recipient(self) -> list[str]:
         return self._recipient
 
     @recipient.setter
-    def recipient(self, value: Union[str, List[str]]):
+    def recipient(self, value: str | list[str]):
         if isinstance(value, str):
             self._recipient = [value]            
         else:
@@ -43,11 +42,11 @@ class NewMail:
         self.recipient = r
 
     @property
-    def copy_recipient(self) -> List[str]:
+    def copy_recipient(self) -> list[str]:
         return self._copy_recipient
 
     @copy_recipient.setter
-    def copy_recipient(self, value: Union[str, List[str]]):
+    def copy_recipient(self, value: str | list[str]):
         if isinstance(value, str):
             self._copy_recipient = [value]            
         else:
@@ -87,11 +86,11 @@ class NewMail:
         self.set_mail_obj()
 
     @property
-    def attachment_path(self) -> List[str]:
+    def attachment_path(self) -> list[str]:
         return self._attachment_path
 
     @attachment_path.setter
-    def attachment_path(self, value: Union[str, List[str]]):
+    def attachment_path(self, value: str | list[str]):
         if isinstance(value, str):
             self._attachment_path = [value]            
         else:
@@ -178,7 +177,7 @@ class ReceivedMail:
         self.body: str = self.pywin32mail.body
         self.html_body: str = self.pywin32mail.htmlbody
         pywin32_attachments_lst = list(self.pywin32mail.attachments)
-        self.attachments: List[ReceivedMailAttachment] = [ReceivedMailAttachment(pywin32_att) for pywin32_att in pywin32_attachments_lst if pywin32_att.type == 1]
+        self.attachments: list[ReceivedMailAttachment] = [ReceivedMailAttachment(pywin32_att) for pywin32_att in pywin32_attachments_lst if pywin32_att.type == 1]
         self.has_attachments: bool = len(self.attachments) > 0
     
     def __str__(self) -> str:
@@ -187,7 +186,7 @@ class ReceivedMail:
     def __repr__(self) -> str:
         return self.__str__()
     
-    def reply_all(self, body: str="", html_body: str="", extra_recipients: List[str]=None, extra_copy_recipients: List[str]=None, attachment_paths: List[str]=None) -> None:
+    def reply_all(self, body: str="", html_body: str="", extra_recipients: list[str]=None, extra_copy_recipients: list[str]=None, attachment_paths: list[str]=None) -> None:
         reply = self.pywin32mail.ReplyAll()
         if html_body != "":
             reply.HTMLBody = html_body + reply.HTMLBody
@@ -225,7 +224,7 @@ class OutlookHandler:
             
         raise LookupError(f'Root folder not found. No folder name containing {self.root_folder_name_contain} was found.')
 
-    def _search_emails_by_subject_recursive(self, folder, subject_contains, folder_mails_dict, min_date: date=None, max_date: date=None, exact_date: date=None, folders: List[str]=None, search_in_inbox: bool=False):
+    def _search_emails_by_subject_recursive(self, folder, subject_contains, folder_mails_dict, min_date: date=None, max_date: date=None, exact_date: date=None, folders: list[str]=None, search_in_inbox: bool=False):
         search_filter = f"@SQL=urn:schemas:httpmail:subject LIKE '%{subject_contains}%'"
         if exact_date is not None:
             formatted_exact_date = exact_date.strftime('%Y-%m-%d')
@@ -254,7 +253,7 @@ class OutlookHandler:
                         continue
                 self._search_emails_by_subject_recursive(subfolder, subject_contains, folder_mails_dict, min_date=min_date, max_date=max_date, exact_date=exact_date, folders=folders)
 
-    def get_emails_by_subject(self, subject_contains: str, min_date: date=None, max_date: date=None, exact_date: date=None, folders: List[str]=None, search_in_inbox: bool=False) -> Dict[str, List[ReceivedMail]]:
+    def get_emails_by_subject(self, subject_contains: str, min_date: date=None, max_date: date=None, exact_date: date=None, folders: list[str]=None, search_in_inbox: bool=False) -> dict[str, list[ReceivedMail]]:
         # Start the recursive search from the root folder.
         folder_mails_dict = {}
         if search_in_inbox:
