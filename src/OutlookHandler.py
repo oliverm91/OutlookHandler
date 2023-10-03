@@ -159,6 +159,12 @@ class ReceivedMailAttachment:
     
     def save(self, save_dir: str, save_filename: str) -> None:
         self.pywin32attachment.SaveAsFile(os.path.join(save_dir, save_filename))
+    
+    def __str__(self) -> str:
+        return f'<ReceivedMailAttachment obj: {self.filename}. Size: {self.size/1024} Kb>'
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 class ReceivedMail:
@@ -176,7 +182,7 @@ class ReceivedMail:
         self.has_attachments: bool = len(self.attachments) > 0
     
     def __str__(self) -> str:
-        return f'<ReceivedMail obj: {self.subject[:10]}..., from: {self.sender}, sent on: {self.date.strftime("%Y-%m-%d")}'
+        return f'<ReceivedMail obj: {self.subject[:10]}..., from: {self.sender}, sent on: {self.date.strftime("%Y-%m-%d")}>'
     
     def __repr__(self) -> str:
         return self.__str__()
