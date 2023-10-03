@@ -1,14 +1,3 @@
-from setuptools import setup, find_packages
-
-setup(
-    name='OutlookHandler',
-    version='0.1',
-    description='A wrapper win32com for handling Outlook',
-    author='Oliver Mohr',
-    author_email='oliver.mohr.b@gmail.com',
-    packages=find_packages(where='src'),
-    install_requires=[
-        'pywin32>=300',
-    ],
-    python_requires='>=3.6',
-)
+from setuptools import setup
+if __name__ == '__main__':
+    setup()
