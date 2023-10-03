@@ -1,6 +1,6 @@
 ### Only tested in few artificial cases. Never in real processes
 
-# OutlookHandler
+# easy_outlook
 
 Wrapper of win32com library for easier use.
 
