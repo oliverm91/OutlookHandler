@@ -233,7 +233,6 @@ class OutlookHandler:
                 search_filter += f" AND (urn:schemas:httpmail:datereceived <= '{formatted_end_date}')"
         
         filtered_emails = folder.Items.Restrict(search_filter)
-
         if filtered_emails.count > 0:
             pywin_mails_lst = list(filtered_emails)
             mail_lst = [ReceivedMail(pywin_mail) for pywin_mail in pywin_mails_lst]
