@@ -211,14 +211,14 @@ class OutlookHandler:
     def __init__(self, root_folder_name_contain: str, inbox_name: str='Bandeja de entrada', max_tries_found_root_folder: int=30) -> None:
         self.outlook_app = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.root_folder_name_contain = root_folder_name_contain
-        self.root_folder = self._get_root_folder()
-        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]
         self._mtfrf = max_tries_found_root_folder
+        self.root_folder = self._get_root_folder()
+        self.inbox_folder = [f for f in self.root_folder.Folders if f.name==inbox_name][0]        
 
     def _get_root_folder(self) -> str:
         counter = 0
         while counter < self._mtfrf:
-            folder = self.outlook_app.Folders.Item(counter)
+            folder = self.outlook_app.Folders[counter]
             if self.root_folder_name_contain in folder.name:
                 return folder
             counter += 1
