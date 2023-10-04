@@ -20,6 +20,8 @@ class NewMail:
         if isinstance(attachment_path, str):
             self._attachment_path = [attachment_path]            
         else:
+            if attachment_path is None:
+                attachment_path = []
             self._attachment_path = [v for v in attachment_path]
         self._mail=None
         self.set_mail_obj()
