@@ -14,8 +14,10 @@ Else, build a `whl` with `python setup.py bdist_wheel`. The `whl` file will be i
 ### Find, download attachment and reply mail
 ```python
 # Get dict of folderName: list[ReceivedMail, ReceivedMail, ...]
-hndlr = OutlookHandler('NameOfOutlookRootFolder') # Sometimes is own mail like x@x.com
-received_mails_dict = hndlr.get_emails_by_subject(subject, exact_date=date.today(), search_in_inbox=True)
+outlook_root_folder_must_contain = 'NameOfOutlookRootFolder' # Sometimes is own mail like x@x.com
+hndlr = OutlookHandler(outlook_root_folder_must_contain)
+found_mails_must_contain_in_subject = 'ABC Report'
+received_mails_dict = hndlr.get_emails_by_subject(found_mails_must_contain_in_subject, exact_date=date.today(), search_in_inbox=True)
 
 #Iter
 for received_mails in received_mails_dict.values():
