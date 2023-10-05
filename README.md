@@ -5,17 +5,15 @@
 Wrapper of win32com library for easier use.
 
 ## Install instructions:
-`python setup.py bdist_wheel`
+If git is installed: `pip install git+https://github.com/oliverm91/easy_outlook.git@main`
 
-Then install whl file in bdist folder with pip as
-
-`pip install bdist/whlfilename.whl`
+Else, build a `whl` with `python setup.py bdist_wheel`. Then install whl file in bdist folder with pip as `pip install bdist/whlfilename.whl`
 
 ## Examples
 
 ### Find mail
 ```python
-# Get Dict of folderName: List[ReceivedMail, ReceivedMail, ...]
+# Get dict of folderName: list[ReceivedMail, ReceivedMail, ...]
 hndlr = OutlookHandler('NameOfOutlookRootFolder') # Sometimes is own mail like x@x.com
 received_mails_dict = hndlr.get_emails_by_subject(subject, exact_date=date.today(), search_in_inbox=True)
 
