@@ -264,5 +264,6 @@ class OutlookHandler:
             folders = [folder.lower() for folder in folders if folder is not None]
             if len(folders) == 0:
                 folders = None
+        # returned folder_mails_dict: dict[str, list[ReceivedMail]] is modified (by ref) inside self._search_emails_by_subject_recursive
         self._search_emails_by_subject_recursive(self.root_folder, subject_contains, folder_mails_dict, min_date=min_date, max_date=max_date, exact_date=exact_date, folders=folders, search_in_inbox=search_in_inbox)
         return folder_mails_dict
