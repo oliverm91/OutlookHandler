@@ -5,7 +5,7 @@ import os
 class NewMail:
     def __init__(self, recipient: str | list[str], copy_recipient: str | list[str]=None, subject: str="", body: str="", html_body: str="", attachment_path: str | list[str]=None):
         if isinstance(recipient, str):
-            self._recipient = [recipient]            
+            self._recipient = recipient.split(';') # Splits recipients into a list. If no ';' found then it becomes a list of len 1.
         else:
             self._recipient = [v for v in recipient]
         if isinstance(copy_recipient, str):
@@ -33,7 +33,7 @@ class NewMail:
     @recipient.setter
     def recipient(self, value: str | list[str]):
         if isinstance(value, str):
-            self._recipient = [value]            
+            self._recipient = value.split(';')
         else:
             self._recipient = [v for v in value]
         self.set_mail_obj()
