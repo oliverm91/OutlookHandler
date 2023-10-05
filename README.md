@@ -7,7 +7,7 @@ Wrapper of win32com library for easier use.
 ## Install instructions:
 If git is installed: `pip install git+https://github.com/oliverm91/easy_outlook.git@main`
 
-Else, build a `whl` with `python setup.py bdist_wheel`. Then install whl file in bdist folder with pip as `pip install bdist/whlfilename.whl`
+Else, build a `whl` with `python setup.py bdist_wheel`. The `whl` file will be in a new generated dist/ folder. Then, install the `whl` file in dist/ folder with pip as `pip install bdist/whlfilename.whl`
 
 ## Examples
 
