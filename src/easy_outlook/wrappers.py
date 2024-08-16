@@ -1,9 +1,12 @@
+from typing import Optional
 import win32com.client
 from datetime import datetime, date
 import os
 
 class NewMail:
-    def __init__(self, recipient: str | list[str], copy_recipient: str | list[str]=None, subject: str="", body: str="", html_body: str="", attachment_path: str | list[str]=None):
+    def __init__(self, recipient: str | list[str], copy_recipient: Optional[str] | Optional[list[str]]=None,
+                 subject: Optional[str]="", body: Optional[str]="", html_body: Optional[str]="",
+                  attachment_path: Optional[str] | Optional[list[str]]=None):
         if isinstance(recipient, str):
             self._recipient = recipient.split(';') # Splits recipients into a list. If no ';' found then it becomes a list of len 1.
         else:
@@ -150,6 +153,9 @@ class NewMail:
     
     def send(self) -> None:
         self._mail.Send()
+    
+    def display(self) -> None:
+        self._mail.Display(True)
 
 
 class ReceivedMailAttachment:
