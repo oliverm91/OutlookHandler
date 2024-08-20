@@ -155,7 +155,7 @@ class NewMail:
         self._mail.Send()
     
     def display(self) -> None:
-        self._mail.Display(True)
+        self._mail.Display()
 
 
 class ReceivedMailAttachment:
